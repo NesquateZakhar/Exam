@@ -41,8 +41,32 @@ public:
     }
 };
 
+bool isValidEmployeeData(const string& name, int id, double salary) 
+{
+    if (name.empty()) 
+    {
+        cout << "Ошибка: Имени не может не быть" << endl;
+        return false;
+    }
+
+    if (id <= 0) 
+    {
+        cout << "Ошибка: ID должен быть больше 0" << endl;
+        return false;
+    }
+
+    if (salary < 0) 
+    {
+        cout << "Ошибка: Зарплата не может быть меньше 0" << endl;
+        return false;
+    }
+
+    return true;
+}
+
 int main() 
 {
+    setlocale(LC_ALL, "ru");
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
     const int ARRAY_SIZE = 5;
@@ -50,26 +74,36 @@ int main()
     
     cout << "Введите данные для трёх сотрудников:" << endl;
     
-    for (int i = 0; i < 3; i++) 
+    int workersCount = 0;
+
+    while (workersCount < 3)
     {
         string name;
         int id;
         double salary;
-        
-        cout << "\nСотрудник " << (i + 1) << ":" << endl;
-        
+
+        cout << "\nСотрудник " << (workersCount + 1) << ":" << endl;
+
         cout << "Имя: ";
         getline(cin, name);
-        
+
         cout << "ID: ";
         cin >> id;
-        
+
         cout << "Зарплата: ";
         cin >> salary;
-        
+
         cin.ignore();
-        
-        employees.push_back(Employee(name, id, salary));
+
+        if (isValidEmployeeData(name, id, salary)) 
+        {
+            employees.push_back(Employee(name, id, salary));
+            workersCount++;
+        }
+        else 
+        {
+            cout << "У вас неправильные данные, введите их заново" << endl;
+        }
     }
     
     cout << "\nСписок всех сотрудников:" << endl;
