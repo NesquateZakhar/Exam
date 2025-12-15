@@ -31,7 +31,7 @@ public:
         return id;
     }
 
-    double getSalary() const 
+    virtual double getSalary() const 
     {
         return salary;
     }
@@ -39,6 +39,28 @@ public:
     void setSalary(double newSalary) 
     {
         salary = newSalary;
+    }
+};
+
+class Manager : public Employee 
+{
+private:
+    string department;
+
+public:
+    Manager(string employeeName, int employeeId, double employeeSalary, string managerDepartment) : Employee(employeeName, employeeId, employeeSalary) 
+    {
+        department = managerDepartment;
+    }
+
+    double getSalary() const override 
+    {
+        return Employee::getSalary() * 1.1;
+    }
+
+    string getDepartment() const 
+    {
+        return department;
     }
 };
 
@@ -92,7 +114,7 @@ int main()
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
     const int ARRAY_SIZE = 5;
-    vector<Employee> employees;
+    vector<Employee*> employees;
     
     cout << "Введите данные для трёх сотрудников:" << endl;
     
@@ -103,6 +125,7 @@ int main()
         string name;
         int id;
         double salary;
+        string classworkers;
 
         cout << "\nСотрудник " << (workersCount + 1) << ":" << endl;
 
@@ -119,7 +142,21 @@ int main()
 
         if (isValidEmployeeData(name, id, salary)) 
         {
-            employees.push_back(Employee(name, id, salary));
+            cout << "Введите должность работника(1 - рабочий, 2 - менеджер): ";
+            getline(cin, classworkers);
+            
+            if (classworkers == "2") 
+            {
+                string department;
+                cout << "Отдел: ";
+                getline(cin, department);
+                employees.push_back(new Manager(name, id, salary, department));
+            } 
+            else 
+            {
+                employees.push_back(new Employee(name, id, salary));
+            }
+            
             workersCount++;
         }
         else 
@@ -132,13 +169,24 @@ int main()
     
     for (int i = 0; i < employees.size(); i++) 
     {
-        cout << "ID: " << employees[i].getId() 
-             << ", Name: " << employees[i].getName() 
-             << ", Salary: " << employees[i].getSalary() << endl;
+        cout << "ID: " << employees[i]->getId() 
+             << ", Name: " << employees[i]->getName() 
+             << ", Salary: " << employees[i]->getSalary();
+
+        Manager* manager = dynamic_cast<Manager*>(employees[i]);
+        if (manager != nullptr) 
+        {
+            cout << ", Department: " << manager->getDepartment();
+        }
+        cout << endl;
     }
 
-    Employee* employeesArray = employees.data();
-    saveToFile(employeesArray, employees.size(), "employees.txt");
+    Employee** employeesArray = employees.data();
+    saveToFile(*employeesArray, employees.size(), "employees.txt");
+    
+    for (int i = 0; i < employees.size(); i++) {
+        delete employees[i];
+    }
     
     return 0;
 }
