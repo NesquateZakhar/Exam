@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <windows.h>
+#include <fstream>
 
 using namespace std;
 
@@ -64,6 +65,27 @@ bool isValidEmployeeData(const string& name, int id, double salary)
     return true;
 }
 
+void saveToFile(const Employee employees[], int size, const string& filename) 
+{
+    ofstream outFile(filename);
+    
+    if (!outFile.is_open()) 
+    {
+        cout << "Не удалось открыть файл" << endl;
+        return;
+    }
+    
+    for (int i = 0; i < size; i++) 
+    {
+        outFile << employees[i].getId() << " " 
+                << employees[i].getName() << " " 
+                << employees[i].getSalary() << endl;
+    }
+    
+    outFile.close();
+    cout << "Данные сохранены в файл " << filename << endl;
+}
+
 int main() 
 {
     setlocale(LC_ALL, "ru");
@@ -114,6 +136,9 @@ int main()
              << ", Name: " << employees[i].getName() 
              << ", Salary: " << employees[i].getSalary() << endl;
     }
+
+    Employee* employeesArray = employees.data();
+    saveToFile(employeesArray, employees.size(), "employees.txt");
     
     return 0;
 }
